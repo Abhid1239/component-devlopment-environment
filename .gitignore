@@ -27,3 +27,8 @@ yarn-error.log*
 .env
 .env.build
 .vercel
+# won't be able to use latest features
+package-lock.json
+
+# build logs not required
+build-storybook.log
