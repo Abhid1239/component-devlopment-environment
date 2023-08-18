@@ -29,6 +29,6 @@ yarn-error.log*
 .vercel
 # won't be able to use latest features
 package-lock.json
-
+pnpm-lock.json
 # build logs not required
 build-storybook.log
