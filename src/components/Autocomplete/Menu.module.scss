@@ -1,0 +1,26 @@
+.wrapper {
+    overflow: auto;
+    border-radius: 5px;
+    border: 1px solid #d5d5d5;
+    position: absolute;
+    top: 42px;
+    left: 0px;
+    width: 100%;
+    z-index: 1;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #808080;
+        border-radius: 3px;
+    }
+}
+
+.menuItem {
+    border-bottom: 1px solid #e1e1e1;
+    cursor: pointer;
+    padding: 5px;
+    background: #fff;
+}
