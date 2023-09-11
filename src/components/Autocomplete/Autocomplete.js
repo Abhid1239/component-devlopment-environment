@@ -57,7 +57,7 @@ function Autocomplete({
 
     const filterData = inputText => {
         setFilteredOptions(options.filter(item =>
-            item.label.includes(inputText)
+            item.label.toLowerCase().includes(inputText.toLowerCase())
         ));
         setShowLoader(false);
     };
@@ -85,7 +85,7 @@ function Autocomplete({
     const handleResultClick = e => {
         const value = e.target.textContent;
         setInputText(value);
-        onResultClick && onResultClick(e);
+        onResultClick(e);
         filterData(value);
     };
 
