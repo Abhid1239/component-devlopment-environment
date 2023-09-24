@@ -71,5 +71,13 @@ export const Primary = {
         primary: true,
         headContent: headContent,
         childContent: childContent,
+        isStickyHead: false,
+        threshold: 0,
+        onScrollHeadClick: (id) => {
+            console.log(id);
+        },
+        onHeadChange: (id) => {
+            console.log(id);
+        },
     },
 };

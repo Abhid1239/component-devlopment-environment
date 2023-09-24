@@ -1,84 +1,113 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './ScrollSpy.module.scss';
+import PropTypes from 'prop-types';
 
-const propTypes = {};
-function ScrollSpy({ headContent, childContent, shouldSticky = false }) {
-	const [activeIndex, setActiveIndex] = useState(0);
-	const childrenRef = useRef(null);
-	const parentRef = useRef(null);
-	const activeIndexRef = useRef(0);
+const propTypes = {
+    headContent: PropTypes.arrayOf(PropTypes.string),
+    childContent: PropTypes.node,
+    isStickyHead: PropTypes.bool,
+    threshold: PropTypes.number,
+    onScrollHeadClick: PropTypes.func,
+    onHeadChange: PropTypes.func,
+};
 
-	const onHeadClick = (id) => {
-		const activeBoundingRect = childrenRef?.current?.children[id]?.getBoundingClientRect();
-		const scrollToPosition = activeBoundingRect.top - parentRef.current.offsetHeight;
-		window.scrollBy({ top: scrollToPosition, behavior: 'smooth' });
-	};
-	const changeSelector = () => {
-		const activeBoundingRect = childrenRef?.current?.children[activeIndexRef.current]?.getBoundingClientRect();
-		const topHeadOffset = parentRef?.current?.offsetHeight + 100; // skeptical
-		const isNotFirstChild = activeIndexRef.current > 0;
-		const isNotLastChild = activeIndexRef.current < childrenRef.current.children.length - 1;
-		if (activeBoundingRect.height + activeBoundingRect.top < topHeadOffset && isNotLastChild) {
-			setActiveIndex(activeIndexRef.current + 1);
-			activeIndexRef.current = activeIndexRef.current + 1;
-			console.log('a');
-		} else if (activeBoundingRect.top > topHeadOffset && isNotFirstChild) {
-			setActiveIndex(activeIndexRef.current - 1);
-			activeIndexRef.current = activeIndexRef.current - 1;
-			console.log('b');
-		}
-	};
-	useEffect(() => {
-		window.addEventListener('scroll', changeSelector);
-		return () => {
-			window.removeEventListener('scroll', changeSelector);
-		};
-	}, []);
+const defaultProps = {
+    headContent: '',
+    isStickyHead: false,
+    threshold: 0,
+    onScrollHeadClick: () => { },
+    onHeadChange: () => { },
+};
 
-	const scrollSpyHead = (Sticky = false) => {
-		return (
-			<nav 
-				ref={parentRef}
-				className={`
-					${styles.headWrapper} 
-					${Sticky ? styles.stickyHeaderStyles : ''}
+function ScrollSpy({
+    headContent,
+    childContent,
+    isStickyHead,
+    threshold,
+    onScrollHeadClick,
+    onHeadChange,
+}) {
+    const [activeIndex, setActiveIndex] = useState(0);
+    const childrenRef = useRef(null);
+    const parentRef = useRef(null);
+
+    const onHeadClick = (id) => {
+        const activeBoundingRect = childrenRef?.current?.children[id]?.offsetTop;
+        const scrollToPosition = parentRef.current.offsetHeight;
+        window.scrollTo({
+            top: activeBoundingRect - (isStickyHead ? scrollToPosition : 0),
+            behavior: 'smooth',
+        });
+        onScrollHeadClick && onScrollHeadClick(id);
+    };
+
+    useEffect(() => {
+        let headerOffsetHeight = isStickyHead ? parentRef.current.offsetHeight + threshold : 0;
+        let triggerMargin = `-${headerOffsetHeight}px 0px -${window.innerHeight - headerOffsetHeight
+            }px 0px`;
+        let observer = new IntersectionObserver(
+            (enteries) => {
+                enteries.forEach((entry) => {
+                    let currentIndex = parseInt(entry.target.id);
+                    // console.log(currentIndex, entry.isIntersecting, entry.isVisible, entry);
+                    if (entry.isIntersecting) {
+                        setActiveIndex(currentIndex);
+                        onHeadChange && onHeadChange(currentIndex);
+                    }
+                });
+            },
+            {
+                threshold: 0,
+                rootMargin: triggerMargin,
+            },
+        );
+        Array.from(childrenRef.current.children).forEach((ele) => observer.observe(ele));
+    }, []);
+
+    const scrollSpyHead = () => {
+        return (
+            <nav
+                ref={parentRef}
+                className={`
+					${styles.headWrapper}
+					${isStickyHead ? styles.stickyHeaderStyles : ''}
 				`}
-			>
-				{headContent &&
-					headContent.map((cont, id) => (
-						<div 
-							key={cont} 
-							onClick={() => onHeadClick(id)} 
-							className={`
+            >
+                {headContent &&
+                    headContent.map((cont, id) => (
+                        <div
+                            key={cont}
+                            onClick={() => onHeadClick(id)}
+                            className={`
 								${styles.headData} ${id === activeIndex ? styles.activeheadData : ''}
 							`}
-						>
-							{cont}
-						</div>
-					))}
-			</nav>
-		);
-	};
-	const srollSpyContent = () => {
-		return (
-			<div ref={childrenRef}>
-				{childContent.map((cont, id) => (
-					<div key={id} id={id}>
-						{cont}
-					</div>
-				))}
-			</div>
-		);
-	};
-	return (
-		<div className={styles.scrollSpy}>
-			{shouldSticky && scrollSpyHead(true)}
-			{scrollSpyHead()}
-			{srollSpyContent()}
-		</div>
-	);
+                        >
+                            {cont}
+                        </div>
+                    ))}
+            </nav>
+        );
+    };
+    const srollSpyContent = () => {
+        return (
+            <div ref={childrenRef}>
+                {childContent.map((cont, id) => (
+                    <div key={id} id={id} className={styles.containerStyles}>
+                        {cont}
+                    </div>
+                ))}
+            </div>
+        );
+    };
+    return (
+        <div className={styles.scrollSpy}>
+            {scrollSpyHead()}
+            {srollSpyContent()}
+        </div>
+    );
 }
 
 ScrollSpy.propTypes = propTypes;
+ScrollSpy.defaultProps = defaultProps;
 
 export default ScrollSpy;

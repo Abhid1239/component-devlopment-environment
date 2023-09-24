@@ -7,9 +7,6 @@
 }
 
 .headWrapper {
-    // position: absolute;
-    position: sticky;
-    top:0;
     display: flex;
     background: #e0ffff;
     padding: 0 20px;
@@ -19,11 +16,8 @@
 }
 
 .stickyHeaderStyles {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-
+    position: sticky;
+    top:0;
 }
 
 .headData {
@@ -34,8 +28,15 @@
     font-size: 28px;
     cursor: pointer;
 }
+h1, p {
+    margin: 0;
+}
 
-.activeheadData {
+.containerStyles {
+    padding: 20px 0;
+}
+
+.headData[data-active="true"], .activeheadData  {
     color: #32cccc;
     border-bottom: 8px solid #32cccc;
 }
