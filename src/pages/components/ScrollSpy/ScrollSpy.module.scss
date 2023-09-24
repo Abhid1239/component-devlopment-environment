@@ -28,7 +28,7 @@
     font-size: 28px;
     cursor: pointer;
 }
-h1 {
+h1, p {
     margin: 0;
 }
 
@@ -36,7 +36,7 @@ h1 {
     padding: 20px 0;
 }
 
-.headData[data-active="true"] {
+.headData[data-active="true"], .activeheadData  {
     color: #32cccc;
     border-bottom: 8px solid #32cccc;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './ScrollSpy.module.scss';
 import PropTypes from 'prop-types';
 
@@ -7,26 +7,38 @@ const propTypes = {
     childContent: PropTypes.node,
     isStickyHead: PropTypes.bool,
     threshold: PropTypes.number,
+    onScrollHeadClick: PropTypes.func,
+    onHeadChange: PropTypes.func,
 };
 
 const defaultProps = {
     headContent: '',
-    isStickyHead: true,
-    threshold: 20,
+    isStickyHead: false,
+    threshold: 0,
+    onScrollHeadClick: () => { },
+    onHeadChange: () => { },
 };
 
-function ScrollSpy({ headContent, childContent, isStickyHead, threshold }) {
+function ScrollSpy({
+    headContent,
+    childContent,
+    isStickyHead,
+    threshold,
+    onScrollHeadClick,
+    onHeadChange,
+}) {
+    const [activeIndex, setActiveIndex] = useState(0);
     const childrenRef = useRef(null);
     const parentRef = useRef(null);
-    const activeIndexRef = useRef(0);
 
     const onHeadClick = (id) => {
         const activeBoundingRect = childrenRef?.current?.children[id]?.offsetTop;
-        const scrollToPosition = parentRef.current.offsetHeight + threshold;
+        const scrollToPosition = parentRef.current.offsetHeight;
         window.scrollTo({
             top: activeBoundingRect - (isStickyHead ? scrollToPosition : 0),
             behavior: 'smooth',
         });
+        onScrollHeadClick && onScrollHeadClick(id);
     };
 
     useEffect(() => {
@@ -37,12 +49,10 @@ function ScrollSpy({ headContent, childContent, isStickyHead, threshold }) {
             (enteries) => {
                 enteries.forEach((entry) => {
                     let currentIndex = parseInt(entry.target.id);
-                    console.log(currentIndex, entry.isIntersecting, entry.isVisible, entry);
+                    // console.log(currentIndex, entry.isIntersecting, entry.isVisible, entry);
                     if (entry.isIntersecting) {
-                        let tabRef = parentRef?.current;
-                        tabRef.children[activeIndexRef.current].dataset['active'] = false;
-                        tabRef.children[currentIndex].dataset['active'] = true;
-                        activeIndexRef.current = currentIndex;
+                        setActiveIndex(currentIndex);
+                        onHeadChange && onHeadChange(currentIndex);
                     }
                 });
             },
@@ -69,7 +79,7 @@ function ScrollSpy({ headContent, childContent, isStickyHead, threshold }) {
                             key={cont}
                             onClick={() => onHeadClick(id)}
                             className={`
-								${styles.headData} 
+								${styles.headData} ${id === activeIndex ? styles.activeheadData : ''}
 							`}
                         >
                             {cont}
