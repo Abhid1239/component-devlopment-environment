@@ -1,4 +1,4 @@
-
+/* eslint-disable react/prop-types */
 import React, { useMemo } from 'react';
 
 const getSizeClasses = (size) => {
