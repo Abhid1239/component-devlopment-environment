@@ -53,6 +53,7 @@ function ScrollSpy({
                     if (entry.isIntersecting) {
                         setActiveIndex(currentIndex);
                         onHeadChange && onHeadChange(currentIndex);
+                        parentRef.current.children[currentIndex].scrollIntoView();
                     }
                 });
             },
@@ -62,6 +63,10 @@ function ScrollSpy({
             },
         );
         Array.from(childrenRef.current.children).forEach((ele) => observer.observe(ele));
+
+        () => {
+            Array.from(childrenRef.current.children).forEach((ele) => observer.unobserve(ele));
+        };
     }, []);
 
     const scrollSpyHead = () => {

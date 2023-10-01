@@ -16,7 +16,20 @@ export default {
     // },
 };
 
-const headContent = ['abc', 'lmn', 'xyz', 'abc1', 'lmn4', 'xyz4'];
+const headContent = [
+    'abc',
+    'lmn',
+    'xyz',
+    'abc1',
+    'lmn4',
+    // 'xyz4',
+    // 'abc5',
+    // 'lmn5',
+    // 'xyz5',
+    // 'abc15',
+    // 'lmn45',
+    // 'xyz45',
+];
 
 const childContent = headContent.map((head) => (
     <>

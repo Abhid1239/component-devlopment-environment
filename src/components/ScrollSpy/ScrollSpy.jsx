@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './ScrollSpy.module.scss';
 import PropTypes from 'prop-types';
 
@@ -28,29 +28,38 @@ function ScrollSpy({
     onHeadChange,
 }) {
     const [activeIndex, setActiveIndex] = useState(0);
-    const childrenRef = useRef(null);
-    const parentRef = useRef(null);
+    const childrensRef = useRef(null);
+    const tabsRef = useRef(null);
 
-    const onHeadClick = (id) => {
-        const activeBoundingRect = childrenRef?.current?.children[id]?.offsetTop;
-        const scrollToPosition = parentRef.current.offsetHeight;
+    const onHeadClick = useCallback((id) => {
+        const activeBoundingRect = childrensRef?.current?.children[id]?.offsetTop;
+        const scrollToPosition = tabsRef.current.offsetHeight;
         window.scrollTo({
             top: activeBoundingRect - (isStickyHead ? scrollToPosition : 0),
             behavior: 'smooth',
         });
         onScrollHeadClick && onScrollHeadClick(id);
-    };
+    }, []);
 
     useEffect(() => {
-        let headerOffsetHeight = isStickyHead ? parentRef.current.offsetHeight + threshold : 0;
+        let headerOffsetHeight = isStickyHead ? tabsRef.current.offsetHeight + threshold : 0;
         let triggerMargin = `-${headerOffsetHeight}px 0px -${window.innerHeight - headerOffsetHeight
             }px 0px`;
+        let isScrollableContainer =
+            tabsRef.current.offsetWidth > window.innerWidth ||
+            tabsRef.current.offsetWidth > childrensRef.current.offsetWidth;
         let observer = new IntersectionObserver(
             (enteries) => {
                 enteries.forEach((entry) => {
                     let currentIndex = parseInt(entry.target.id);
                     // console.log(currentIndex, entry.isIntersecting, entry.isVisible, entry);
                     if (entry.isIntersecting) {
+                        isStickyHead &&
+                            isScrollableContainer &&
+                            tabsRef.current.children[currentIndex].scrollIntoView({
+                                behavior: 'smooth',
+                                inline: 'center',
+                            });
                         setActiveIndex(currentIndex);
                         onHeadChange && onHeadChange(currentIndex);
                     }
@@ -61,13 +70,17 @@ function ScrollSpy({
                 rootMargin: triggerMargin,
             },
         );
-        Array.from(childrenRef.current.children).forEach((ele) => observer.observe(ele));
+        Array.from(childrensRef.current.children).forEach((ele) => observer.observe(ele));
+
+        () => {
+            Array.from(childrensRef.current.children).forEach((ele) => observer.unobserve(ele));
+        };
     }, []);
 
     const scrollSpyHead = () => {
         return (
             <nav
-                ref={parentRef}
+                ref={tabsRef}
                 className={`
 					${styles.headWrapper}
 					${isStickyHead ? styles.stickyHeaderStyles : ''}
@@ -90,7 +103,7 @@ function ScrollSpy({
     };
     const srollSpyContent = () => {
         return (
-            <div ref={childrenRef}>
+            <div ref={childrensRef}>
                 {childContent.map((cont, id) => (
                     <div key={id} id={id} className={styles.containerStyles}>
                         {cont}

@@ -7,10 +7,10 @@
 }
 
 .headWrapper {
+    overflow-x: scroll;
     display: flex;
     background: #e0ffff;
     padding: 0 20px;
-    color: rgb(50, 48, 48);
     border-bottom: 1px solid #e0f3ff;
     box-shadow: 0 4px 8px 0 #e0f3ff;
 }
