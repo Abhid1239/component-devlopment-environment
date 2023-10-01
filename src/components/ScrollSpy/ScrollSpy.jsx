@@ -31,15 +31,18 @@ function ScrollSpy({
     const childrensRef = useRef(null);
     const tabsRef = useRef(null);
 
-    const onHeadClick = useCallback((id) => {
-        const activeBoundingRect = childrensRef?.current?.children[id]?.offsetTop;
-        const scrollToPosition = tabsRef.current.offsetHeight;
-        window.scrollTo({
-            top: activeBoundingRect - (isStickyHead ? scrollToPosition : 0),
-            behavior: 'smooth',
-        });
-        onScrollHeadClick && onScrollHeadClick(id);
-    }, []);
+    const onHeadClick = useCallback(
+        (id) => {
+            const activeBoundingRect = childrensRef?.current?.children[id]?.offsetTop;
+            const scrollToPosition = tabsRef.current.offsetHeight;
+            window.scrollTo({
+                top: activeBoundingRect - (isStickyHead ? scrollToPosition : 0),
+                behavior: 'smooth',
+            });
+            onScrollHeadClick && onScrollHeadClick(id);
+        },
+        [isStickyHead, onScrollHeadClick],
+    );
 
     useEffect(() => {
         let headerOffsetHeight = isStickyHead ? tabsRef.current.offsetHeight + threshold : 0;
