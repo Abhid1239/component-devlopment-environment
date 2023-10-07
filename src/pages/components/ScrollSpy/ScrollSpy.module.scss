@@ -1,0 +1,42 @@
+.scrollSpy {
+    display: relative;
+    margin: auto;
+    border: 1px solid #e0f3ff;
+    scroll-behavior: smooth;
+    height: 100%;
+}
+
+.headWrapper {
+    overflow-x: scroll;
+    display: flex;
+    background: #e0ffff;
+    padding: 0 20px;
+    border-bottom: 1px solid #e0f3ff;
+    box-shadow: 0 4px 8px 0 #e0f3ff;
+}
+
+.stickyHeaderStyles {
+    position: sticky;
+    top:0;
+}
+
+.headData {
+    padding: 12px 0;
+    margin: 0 20px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 28px;
+    cursor: pointer;
+}
+h1, p {
+    margin: 0;
+}
+
+.containerStyles {
+    padding: 20px 0;
+}
+
+.headData[data-active="true"], .activeheadData  {
+    color: #32cccc;
+    border-bottom: 8px solid #32cccc;
+}

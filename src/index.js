@@ -5,11 +5,12 @@ import App from './pages/App/App';
 // import reportWebVitals from './reportWebVitals';
 // import { sendToVercelAnalytics } from './vitals';
 
+// eslint-disable-next-line react/no-deprecated
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>,
+    document.getElementById('root'),
 );
 
 // reportWebVitals(sendToVercelAnalytics);
