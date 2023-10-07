@@ -1,6 +1,7 @@
 import React from 'react';
 
 import ScrollSpy from './ScrollSpy';
+import Autocomplete from './Autocomplete/Autocomplete';
 const headContent = ['abc', 'lmn', 'xyz', 'abc1', 'lmn4', 'xyz4'];
 
 const childContent = headContent.map((head) => (
@@ -26,7 +27,12 @@ const childContent = headContent.map((head) => (
     </>
 ));
 function main() {
-    return <ScrollSpy headContent={headContent} childContent={childContent} />;
+    return (
+        <>
+            <ScrollSpy headContent={headContent} childContent={childContent} />
+            <Autocomplete />
+        </>
+    );
 }
 
 export default main;
